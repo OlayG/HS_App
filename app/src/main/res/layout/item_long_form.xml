@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="longForm"
+            type="com.hermannsterling.alberstonsandroidcoding.model.LongForm" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_acronym"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:paddingStart="20dp"
+            android:paddingTop="5dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            app:layout_constraintEnd_toStartOf="@+id/tv_since"
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="@{longForm.lf}" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_since"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:paddingTop="5dp"
+            android:paddingEnd="20dp"
+            android:text="@{Integer.toString(longForm.since)}"
+            android:textAlignment="textEnd"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_acronym" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
