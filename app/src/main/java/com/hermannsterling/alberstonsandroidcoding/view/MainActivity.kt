@@ -1,52 +1,57 @@
 package com.hermannsterling.alberstonsandroidcoding.view
 
-import android.os.Bundle
 import android.view.KeyEvent
-import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.EditText
-import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.BindingAdapter
-import androidx.recyclerview.widget.RecyclerView
+import com.hermannsterling.alberstonsandroidcoding.R
 import com.hermannsterling.alberstonsandroidcoding.adapter.AcronymAdapter
+import com.hermannsterling.alberstonsandroidcoding.base.BaseActivity
 import com.hermannsterling.alberstonsandroidcoding.databinding.ActivityMainBinding
+import com.hermannsterling.alberstonsandroidcoding.model.LongForm
+import com.hermannsterling.alberstonsandroidcoding.utils.State
 import com.hermannsterling.alberstonsandroidcoding.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
+class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
+
     private val viewModel by viewModels<MainViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        super.setContentView(binding.root).run {
-            binding.lifecycleOwner = this@MainActivity
-            binding.viewModel = viewModel
-        }
-
-        setListener()
-        initObserver()
+    override fun onActivityCreated(binding: ActivityMainBinding) {
+        initBinding(binding)
+        setupObserver(binding)
     }
 
-
-    private fun initObserver() {
-        viewModel.acronym.observe(this) {
-            binding.adapter = AcronymAdapter(it.longForms)
+    private fun setupObserver(binding: ActivityMainBinding) {
+        viewModel.state.observe(this) {
+            if (it is State.Success)
+                (binding.adapter as AcronymAdapter).setLongForms(it.data)
         }
     }
 
-    private fun setListener() {
-        binding.btnSearch.setOnClickListener {
-            fetchLongForm()
+    private fun initBinding(binding: ActivityMainBinding) = with(binding) {
+        lifecycleOwner = this@MainActivity
+        viewModel = this@MainActivity.viewModel
+        adapter = AcronymAdapter(::longFormSelected)
+        etSearch.setOnEditorActionListener { v, actionId, event ->
+            val imeAction = when (actionId) {
+                EditorInfo.IME_ACTION_DONE,
+                EditorInfo.IME_ACTION_SEND,
+                EditorInfo.IME_ACTION_GO -> true
+                else -> false
+            }
+
+            val keyDownEvent = event?.keyCode == KeyEvent.KEYCODE_ENTER
+                    && event.action == KeyEvent.ACTION_DOWN
+
+            return@setOnEditorActionListener if (imeAction || keyDownEvent) {
+                this@MainActivity.viewModel.fetchAcronym(v);true
+            } else false
         }
     }
 
-    private fun fetchLongForm() {
-        viewModel.fetchAcronym(binding.etSearch.text.toString())
+    private fun longFormSelected(longForm: LongForm) {
+        Toast.makeText(this, longForm.lf, Toast.LENGTH_SHORT).show()
     }
 }
