@@ -13,7 +13,6 @@
             name="adapter"
             type="com.hermannsterling.alberstonsandroidcoding.adapter.AcronymAdapter" />
 
-
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -42,14 +41,17 @@
             android:layout_marginEnd="20dp"
             app:layout_constraintEnd_toStartOf="@id/btn_search"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_title">
+            app:layout_constraintTop_toBottomOf="@id/tv_title"
+            app:setupVisibility="@{viewModel.state}">
 
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_search"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter a acronym/initial" />
+                android:hint="@string/enter_a_acronym_initial"
+                android:singleLine="true"
+                android:text="@={viewModel.acronym}" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -58,9 +60,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
-            android:onClick="@{}"
+            android:onClick="@{viewModel::fetchAcronym}"
             android:padding="10dp"
-            android:text="Search"
+            android:text="@string/search"
             app:layout_constraintBottom_toBottomOf="@id/et_search_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/et_search_layout"
@@ -69,40 +71,26 @@
         <ProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyle"
-            setupVisibility="@{viewModel.loading}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
-            android:layout_marginEnd="40dp"
-            android:visibility="invisible"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintEnd_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/rv_acronym_list"
-            app:layout_constraintVertical_bias=".2" />
-
-        <com.google.android.material.textview.MaterialTextView
-            setupVisibility="@{viewModel.loading}"
-            android:id="@+id/tv_not_found"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="invisible"
-            app:layout_constraintStart_toStartOf="@id/et_search_layout"
-            app:layout_constraintEnd_toEndOf="@id/et_search_layout"
-            app:layout_constraintTop_toBottomOf="@id/et_search_layout"
-            android:text="NOT FOUND" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:setupVisibility="@{viewModel.state}" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_acronym_list"
-            setAdapter="@{adapter}"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="20dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_not_found"
-            app:layout_constraintVertical_bias="0.0"
-            tools:layout_editor_absoluteX="0dp"
+            app:layout_constraintTop_toBottomOf="@id/et_search_layout"
+            app:setAdapter="@{adapter}"
+            app:setupVisibility="@{viewModel.state}"
             tools:listitem="@layout/item_long_form" />
 
 
